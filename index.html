@@ -3,43 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagamento via Pix</title>
+    <title>Oferta Rio do Espirito 2027</title>
+    
+    <!-- Fonte elegante para o título -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Aqui o HTML carrega o seu arquivo de configuração -->
     <script src="config.js"></script>
+
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
-        h2 { margin-top: 0; color: #333; }
-        .input-group { margin: 20px 0; text-align: left; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
-        .input-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
-        button { width: 100%; padding: 14px; background: #00b4d8; color: #fff; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #0096c7; }
-        .btn-secundario { background: #e0e0e0; color: #333; margin-top: 10px; }
-        .btn-secundario:hover { background: #ccc; }
+        /* Fundo escuro geral */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #121214; 
+            color: #e1e1e6;
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Título Dourado */
+        .titulo-principal {
+            font-family: 'Playfair Display', serif;
+            color: #d4af37; /* Dourado */
+            text-align: center;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        /* Caixa de conteúdo escura com borda sutil */
+        .container { 
+            background: #1e1e24; 
+            padding: 40px 30px; 
+            border-radius: 12px; 
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(212, 175, 55, 0.05); 
+            text-align: center; 
+            width: 100%; 
+            max-width: 380px; 
+        }
+
+        h2 { 
+            margin-top: 0; 
+            color: #d4af37; 
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .input-group { margin: 20px 0 30px; text-align: center; }
+        .input-group label { display: block; margin-bottom: 15px; color: #a8a8b3; font-size: 14px;}
+        
+        /* Input de valor com visual premium (Apenas linha embaixo) */
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-bottom: 2px solid #444;
+            padding-bottom: 10px;
+            transition: 0.3s;
+        }
+        .input-wrapper:focus-within { border-bottom-color: #d4af37; }
+        .input-wrapper span { color: #d4af37; font-size: 24px; font-weight: bold; }
+        
+        .input-group input { 
+            width: 150px; 
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 32px; 
+            font-weight: bold;
+            text-align: left;
+            outline: none;
+        }
+
+        /* Botões Vazados com Borda Dourada */
+        button { 
+            width: 100%; 
+            padding: 16px; 
+            background: transparent; 
+            color: #d4af37; 
+            border: 1px solid #d4af37; 
+            border-radius: 8px; 
+            font-size: 15px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        button:hover { 
+            background: rgba(212, 175, 55, 0.1); 
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-secundario { 
+            border-color: #444; 
+            color: #a8a8b3; 
+            margin-top: 15px; 
+        }
+        .btn-secundario:hover { 
+            background: rgba(255, 255, 255, 0.05); 
+            border-color: #666;
+            color: #fff;
+            box-shadow: none;
+        }
+        
         #tela-2 { display: none; }
-        #qrcode { margin: 20px auto; display: flex; justify-content: center; }
-        #codigoPixStr { width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 20px; font-size: 12px; color: #666; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        
+        /* Fundo branco no QR Code para garantir leitura da câmera */
+        #qrcode { 
+            margin: 0 auto 30px; 
+            display: flex; 
+            justify-content: center; 
+            background: #fff; 
+            padding: 15px; 
+            border-radius: 10px; 
+            width: fit-content;
+        }
+
+        #codigoPixStr { 
+            width: 100%; 
+            padding: 14px; 
+            margin-top: 10px; 
+            margin-bottom: 25px; 
+            font-size: 13px; 
+            color: #888; 
+            background: #121214; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
+<h1 class="titulo-principal">Oferta Rio do Espirito 2027</h1>
+
 <div class="container">
+    <!-- TELA 1: Digitar o Valor -->
     <div id="tela-1">
-        <h2>Pagamento via Pix</h2>
+        <h2>Qual valor você deseja ofertar?</h2>
         <div class="input-group">
-            <label for="valorPix">Qual valor você deseja enviar?</label>
-            <input type="number" id="valorPix" placeholder="Ex: 150.00" step="0.01" min="0.01">
+            <div class="input-wrapper">
+                <span>R$</span>
+                <input type="number" id="valorPix" placeholder="0,00" step="0.01" min="0.01">
+            </div>
         </div>
-        <button onclick="avancarParaQrCode()">Gerar Pagamento</button>
+        <button onclick="avancarParaQrCode()">Gerar Pagamento via Pix</button>
     </div>
 
+    <!-- TELA 2: QR Code e Copia/Cola -->
     <div id="tela-2">
         <h2>Escaneie o código</h2>
         <div id="qrcode"></div>
-        <label style="font-size: 14px; color: #555;">Pix Copia e Cola:</label>
+        
+        <label style="font-size: 13px; color: #a8a8b3; display: block; text-align: left; margin-bottom: 8px;">Copia e Cola:</label>
         <input type="text" id="codigoPixStr" readonly>
+        
         <button onclick="copiarCodigo()">Copiar Código Pix</button>
         <button class="btn-secundario" onclick="voltar()">Novo Valor</button>
     </div>
@@ -57,8 +187,7 @@
             return;
         }
 
-        // Puxa os dados direto do seu arquivo config.js
-        if (!CONFIG_PIX || CONFIG_PIX.chave === "sua-chave-aqui") {
+        if (typeof CONFIG_PIX === 'undefined' || CONFIG_PIX.chave === "sua-chave-aqui") {
             alert("A chave Pix não foi configurada no arquivo config.js.");
             return;
         }
@@ -68,7 +197,15 @@
 
         const qrcodeContainer = document.getElementById("qrcode");
         qrcodeContainer.innerHTML = "";
-        qrCodeApp = new QRCode(qrcodeContainer, { text: payloadStr, width: 200, height: 200 });
+        
+        // QR Code gerado em tamanho ideal
+        qrCodeApp = new QRCode(qrcodeContainer, { 
+            text: payloadStr, 
+            width: 220, 
+            height: 220,
+            colorDark : "#000000",
+            colorLight : "#ffffff"
+        });
 
         document.getElementById('tela-1').style.display = 'none';
         document.getElementById('tela-2').style.display = 'block';
@@ -78,7 +215,7 @@
         const copyText = document.getElementById("codigoPixStr");
         copyText.select();
         copyText.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(copyText.value).then(() => alert("Código Pix copiado!"));
+        navigator.clipboard.writeText(copyText.value).then(() => alert("Código Pix copiado com sucesso!"));
     }
 
     function voltar() {
