@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento via Pix</title>
+    <!-- Biblioteca leve para gerar a imagem do QR Code -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+        h2 { margin-top: 0; color: #333; }
+        .input-group { margin: 20px 0; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
+        .input-group input { 
+            width: 100%; padding: 12px; border: 1px solid #ccc; 
+            border-radius: 6px; font-size: 16px; box-sizing: border-box;
+        }
+        button {
+            width: 100%; padding: 14px; background: #00b4d8; color: #fff;
+            border: none; border-radius: 6px; font-size: 16px; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background: #0096c7; }
+        .btn-secundario { background: #e0e0e0; color: #333; margin-top: 10px; }
+        .btn-secundario:hover { background: #ccc; }
+        
+        #tela-2 { display: none; }
+        #qrcode { margin: 20px auto; display: flex; justify-content: center; }
+        #codigoPixStr { 
+            width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 20px;
+            font-size: 12px; color: #666; background: #f9f9f9; 
+            border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- TELA 1: Digitar o Valor -->
+    <div id="tela-1">
+        <h2>Pagamento via Pix</h2>
+        <div class="input-group">
+            <label for="valorPix">Qual valor você deseja enviar?</label>
+            <input type="number" id="valorPix" placeholder="Ex: 150.00" step="0.01" min="0.01">
+        </div>
+        <button onclick="avancarParaQrCode()">Gerar Pagamento</button>
+    </div>
+
+    <!-- TELA 2: QR Code e Copia/Cola -->
+    <div id="tela-2">
+        <h2>Escaneie o código</h2>
+        <div id="qrcode"></div>
+        
+        <label style="font-size: 14px; color: #555;">Pix Copia e Cola:</label>
+        <input type="text" id="codigoPixStr" readonly>
+        
+        <button onclick="copiarCodigo()">Copiar Código Pix</button>
+        <button class="btn-secundario" onclick="voltar()">Novo Valor</button>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // CONFIGURAÇÕES DO RECEBEDOR
+    // ==========================================
+    const CHAVE_PIX = "sua-chave-aqui"; // Insira sua chave (ex: telefone, email, CPF/CNPJ)
+    const NOME_RECEBEDOR = "Pro Ar Engenharia"; 
+    const CIDADE_RECEBEDOR = "Bauru";
+
+    let qrCodeApp = null;
+
+    function avancarParaQrCode() {
+        const valorInput = document.getElementById('valorPix').value;
+        const valor = parseFloat(valorInput);
+
+        if (isNaN(valor) || valor <= 0) {
+            alert("Por favor, insira um valor válido.");
+            return;
+        }
+
+        // Gera a string do Pix
+        const payloadStr = gerarPayloadPix(CHAVE_PIX, NOME_RECEBEDOR, CIDADE_RECEBEDOR, valor);
+        
+        // Exibe a string no input de Copia e Cola
+        document.getElementById('codigoPixStr').value = payloadStr;
+
+        // Limpa o QR Code antigo e gera um novo
+        const qrcodeContainer = document.getElementById("qrcode");
+        qrcodeContainer.innerHTML = "";
+        qrCodeApp = new QRCode(qrcodeContainer, {
+            text: payloadStr,
+            width: 200,
+            height: 200,
+        });
+
+        // Alterna as telas
+        document.getElementById('tela-1').style.display = 'none';
+        document.getElementById('tela-2').style.display = 'block';
+    }
+
+    function copiarCodigo() {
+        const copyText = document.getElementById("codigoPixStr");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // Para dispositivos móveis
+        navigator.clipboard.writeText(copyText.value).then(() => {
+            alert("Código Pix copiado!");
+        });
+    }
+
+    function voltar() {
+        document.getElementById('tela-2').style.display = 'none';
+        document.getElementById('tela-1').style.display = 'block';
+        document.getElementById('valorPix').value = '';
+    }
+
+    // ==========================================
+    // MOTOR DE GERAÇÃO DO PADRÃO EMV (PIX)
+    // ==========================================
+    function gerarPayloadPix(chave, nome, cidade, valor) {
+        const formatField = (id, value) => {
+            const length = value.length.toString().padStart(2, '0');
+            return `${id}${length}${value}`;
+        };
+
+        const payloadFormatInfo = formatField('00', '01') + formatField('01', chave);
+        const merchantAccountInfo = formatField('26', formatField('00', 'br.gov.bcb.pix') + payloadFormatInfo);
+        const merchantCategoryCode = formatField('52', '0000');
+        const transactionCurrency = formatField('53', '986');
+        const transactionAmount = formatField('54', valor.toFixed(2));
+        const countryCode = formatField('58', 'BR');
+        const merchantName = formatField('59', nome.substring(0, 25));
+        const merchantCity = formatField('60', cidade.substring(0, 15));
+        const additionalDataField = formatField('62', formatField('05', '***'));
+
+        let payload = '000201' + merchantAccountInfo + merchantCategoryCode + transactionCurrency + 
+                      transactionAmount + countryCode + merchantName + merchantCity + additionalDataField + '6304';
+        
+        return payload + calcularCrc16(payload);
+    }
+
+    function calcularCrc16(payload) {
+        let crc = 0xFFFF;
+        for (let i = 0; i < payload.length; i++) {
+            crc ^= payload.charCodeAt(i) << 8;
+            for (let j = 0; j < 8; j++) {
+                if ((crc & 0x8000) !== 0) {
+                    crc = (crc << 1) ^ 0x1021;
+                } else {
+                    crc = crc << 1;
+                }
+            }
+        }
+        return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+    }
+</script>
+
+</body>
+</html>
