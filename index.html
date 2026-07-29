@@ -93,8 +93,10 @@
             return `${id}${length}${value}`;
         };
 
-        const payloadFormatInfo = formatField('00', '01') + formatField('01', chave);
-        const merchantAccountInfo = formatField('26', formatField('00', 'br.gov.bcb.pix') + payloadFormatInfo);
+        const guiInfo = formatField('00', 'BR.GOV.BCB.PIX');
+        const chaveInfo = formatField('01', chave);
+        const merchantAccountInfo = formatField('26', guiInfo + chaveInfo);
+        
         const merchantCategoryCode = formatField('52', '0000');
         const transactionCurrency = formatField('53', '986');
         const transactionAmount = formatField('54', valor.toFixed(2));
