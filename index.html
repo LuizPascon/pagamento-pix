@@ -27,15 +27,40 @@
         }
 
         /* Título Dourado */
+        /* Título Dourado Super Premium */
         .titulo-principal {
             font-family: 'Playfair Display', serif;
-            color: #d4af37; /* Dourado */
+            font-size: 32px;
             text-align: center;
-            font-size: 28px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 40px;
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            letter-spacing: 6px; /* Espaçamento largo traz muita elegância */
+            margin-bottom: 45px;
+            
+            /* Efeito de Dourado Metálico (Reflexo de luz) */
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            
+            /* Sombra escura para destacar o metal do fundo escuro */
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9), 
+                         0 0 25px rgba(212, 175, 55, 0.2);
+            
+            /* Prepara o espaço para a linha decorativa abaixo */
+            position: relative;
+            padding-bottom: 18px;
+        }
+
+        /* Linha decorativa dourada com pontas suaves */
+        .titulo-principal::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #d4af37, transparent);
         }
 
         /* Caixa de conteúdo escura com borda sutil */
